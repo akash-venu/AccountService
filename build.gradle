@@ -1,0 +1,58 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.0'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.tekarch'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging' // Exclude default logging
+	}
+
+	// Exclude conflicting dependencies
+	configurations.all {
+		exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j' // Exclude Log4j2 to SLF4J bridge
+		exclude group: 'ch.qos.logback', module: 'logback-classic' // Exclude Logback
+		exclude group: 'ch.qos.logback', module: 'logback-core'
+	}
+
+	// Add Log4j2 dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-log4j2' // Enable Log4j2
+	implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'    // SLF4J to Log4j2 bridge
+	implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+	implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+
+	// Spring Boot Starter for validation (includes hibernate-validator)
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// If needed explicitly (hibernate-validator and validation-api are included in the starter)
+	implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
+	implementation 'javax.validation:validation-api:2.0.1.Final'
+
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
